@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<style>
+    header {
+        width: 100%;
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+        opacity: 95%;
+
+        background-image: url('https://149842022.v2.pressablecdn.com/illdy/wp-content/themes/illdy/layout/images/front-page/front-page-header.jpg');
+    }
+</style>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="https://149842022.v2.pressablecdn.com/illdy/wp-content/uploads/sites/58/2016/03/cropped-footer-logo-1.png"
+                        alt="">
+                </div>
+                <ul class="nav-links d-flex flex-row d-grid gap-4 justify-content-end">
+                    <li class="list-unstyled"></li><a href="" class="text-decoration-none link-light">About</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Portfollo</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Testimonias</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Services</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Blog</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Our Team</a></li>
+                    <li class="list-unstyled"><a href="" class="text-decoration-none link-light">Contact US</a></li>
+                </ul>
+
+
+            </div>
+        </nav>
+        <div class="container">
+
+        </div>
+    </header>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

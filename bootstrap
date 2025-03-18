@@ -24,7 +24,7 @@
 <body>
     <header>
         <nav class="navbar">
-            <div class="container">
+            <div class="container mt-4 p-2">
                 <div class="logo">
                     <img src="https://149842022.v2.pressablecdn.com/illdy/wp-content/uploads/sites/58/2016/03/cropped-footer-logo-1.png"
                         alt="">
@@ -42,7 +42,18 @@
 
             </div>
         </nav>
-        <div class="container">
+        <div class="text text-center container">
+            <div class="row" style="margin-top: 195px;">
+                <h1 class="text-white fw-bold" style="font-size: 75px;">Clean.Slick.Pixel Perfect</h1>
+                <p class="text-white">lldy is a great one-page theme, perfect for developers and designers but also for
+                    someone who just wants
+                    a new website for his business. Try it now!</p>
+
+
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-lg" style="background-color: grey;">Secondary</button>
+            <a class="btn btn-warning btn-lg" href="#" role="button">Link</a>
+
 
         </div>
     </header>

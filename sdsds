@@ -1,0 +1,98 @@
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import { v4 as uuidv4 } from 'uuid';
+
+const App = () => {
+  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("todos")) || []);
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
+    }
+  }, []);
+
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  const handleAddTodo = () => {
+    if (inputValue.trim() === '') return;
+
+    const newTodo = {
+      id: uuidv4(),
+      text: inputValue,
+    };
+
+    setTodos([...todos, newTodo]);
+    setInputValue('');
+  };
+
+  const handleClearTodos = () => {
+    setTodos([]);
+  };
+
+  const handleDeleteTodo = (id) => {
+    const updatedTodos = todos.filter(todo => todo.id !== id);
+    setTodos(updatedTodos);
+  };
+
+  return (
+    <div>
+      <meta charSet="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
+      />
+      <title>TodoList</title>
+
+      <div className="container mt-5">
+        <h1 className="text-center mb-4">Todo List</h1>
+        <div className="todo-app mx-auto">
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Add todos"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+          <button onClick={handleAddTodo} className="btn btn-primary w-100 mb-3">
+            Add Todo
+          </button>
+          <ul className="list-group">
+            {todos.map((todo) => (
+              <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
+                {todo.text}
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => handleDeleteTodo(todo.id)}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="text-center mt-4">
+          <button onClick={handleClearTodos} className="btn btn-danger">
+            Clear All Todos
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;

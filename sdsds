@@ -1,98 +1,205 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import { v4 as uuidv4 } from 'uuid';
+/*
+Folder Structure:
+- src/
+  - components/
+    - ProductList.jsx
+    - Cart.jsx
+  - context/
+    - CartContext.jsx
+  - data/
+    - products.js
+  - App.jsx
+  - main.jsx
+*/
 
-const App = () => {
-  const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("todos")) || []);
-  const [inputValue, setInputValue] = useState('');
+// src/data/products.js
+export const products = [
+  { id: 1, name: 'Notebook', price: 5 },
+  { id: 2, name: 'Pen', price: 1 },
+  { id: 3, name: 'Eraser', price: 0.5 },
+  { id: 4, name: 'Ruler', price: 1.5 },
+  { id: 5, name: 'Pencil Case', price: 3 },
+  { id: 6, name: 'Highlighter', price: 2 },
+  { id: 7, name: 'Stapler', price: 4 },
+  { id: 8, name: 'Scissors', price: 3.5 },
+  { id: 9, name: 'Glue Stick', price: 1.2 },
+  { id: 10, name: 'Colored Pencils', price: 6 },
+  { id: 11, name: 'Markers', price: 5 },
+  { id: 12, name: 'Sticky Notes', price: 1.8 },
+];
 
-  useEffect(() => {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) {
-      setTodos(JSON.parse(storedTodos));
+// src/context/CartContext.jsx
+import React, { createContext, useReducer, useEffect } from 'react';
+
+export const CartContext = createContext();
+
+const initialState = {
+  cart: JSON.parse(localStorage.getItem('cart')) || [],
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'ADD_TO_CART': {
+      const item = state.cart.find(p => p.id === action.payload.id);
+      if (item) {
+        return {
+          ...state,
+          cart: state.cart.map(p =>
+            p.id === action.payload.id ? { ...p, quantity: p.quantity + 1 } : p
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          cart: [...state.cart, { ...action.payload, quantity: 1 }],
+        };
+      }
     }
-  }, []);
+    case 'INCREASE_QUANTITY': {
+      return {
+        ...state,
+        cart: state.cart.map(p =>
+          p.id === action.payload ? { ...p, quantity: p.quantity + 1 } : p
+        ),
+      };
+    }
+    case 'DECREASE_QUANTITY': {
+      return {
+        ...state,
+        cart: state.cart.map(p =>
+          p.id === action.payload && p.quantity > 1
+            ? { ...p, quantity: p.quantity - 1 }
+            : p
+        ),
+      };
+    }
+    case 'REMOVE_FROM_CART': {
+      return {
+        ...state,
+        cart: state.cart.filter(p => p.id !== action.payload),
+      };
+    }
+    default:
+      return state;
+  }
+}
 
+export const CartProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem('cart', JSON.stringify(state.cart));
+  }, [state.cart]);
 
-  const handleAddTodo = () => {
-    if (inputValue.trim() === '') return;
+  return (
+    <CartContext.Provider value={{ cart: state.cart, dispatch }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
 
-    const newTodo = {
-      id: uuidv4(),
-      text: inputValue,
-    };
+// src/components/ProductList.jsx
+import React, { useContext } from 'react';
+import { products } from '../data/products';
+import { CartContext } from '../context/CartContext';
 
-    setTodos([...todos, newTodo]);
-    setInputValue('');
-  };
-
-  const handleClearTodos = () => {
-    setTodos([]);
-  };
-
-  const handleDeleteTodo = (id) => {
-    const updatedTodos = todos.filter(todo => todo.id !== id);
-    setTodos(updatedTodos);
-  };
+export const ProductList = () => {
+  const { dispatch } = useContext(CartContext);
 
   return (
     <div>
-      <meta charSet="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
-        crossOrigin="anonymous"
-      />
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossOrigin="anonymous"
-        referrerPolicy="no-referrer"
-      />
-      <title>TodoList</title>
-
-      <div className="container mt-5">
-        <h1 className="text-center mb-4">Todo List</h1>
-        <div className="todo-app mx-auto">
-          <input
-            type="text"
-            className="form-control mb-3"
-            placeholder="Add todos"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <button onClick={handleAddTodo} className="btn btn-primary w-100 mb-3">
-            Add Todo
-          </button>
-          <ul className="list-group">
-            {todos.map((todo) => (
-              <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                {todo.text}
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => handleDeleteTodo(todo.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="text-center mt-4">
-          <button onClick={handleClearTodos} className="btn btn-danger">
-            Clear All Todos
-          </button>
-        </div>
+      <h1 className="text-2xl font-bold mb-4">Products</h1>
+      <div className="grid grid-cols-2 gap-4">
+        {products.map(product => (
+          <div key={product.id} className="border p-2 rounded shadow">
+            <h2 className="font-semibold">{product.name}</h2>
+            <p>${product.price}</p>
+            <button
+              className="mt-2 bg-blue-500 text-white px-2 py-1 rounded"
+              onClick={() => dispatch({ type: 'ADD_TO_CART', payload: product })}
+            >
+              Add to Cart
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default App;
+// src/components/Cart.jsx
+import React, { useContext } from 'react';
+import { CartContext } from '../context/CartContext';
+
+export const Cart = () => {
+  const { cart, dispatch } = useContext(CartContext);
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mt-6 mb-4">Cart</h1>
+      {cart.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <div>
+          {cart.map(item => (
+            <div key={item.id} className="flex justify-between items-center mb-2 border-b pb-2">
+              <div>
+                <p>{item.name} (${item.price})</p>
+                <p>Quantity: {item.quantity}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="bg-green-500 text-white px-2 rounded"
+                  onClick={() => dispatch({ type: 'INCREASE_QUANTITY', payload: item.id })}
+                >
+                  +
+                </button>
+                <button
+                  className="bg-yellow-500 text-white px-2 rounded"
+                  onClick={() => dispatch({ type: 'DECREASE_QUANTITY', payload: item.id })}
+                >
+                  -
+                </button>
+                <button
+                  className="bg-red-500 text-white px-2 rounded"
+                  onClick={() => dispatch({ type: 'REMOVE_FROM_CART', payload: item.id })}
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// src/App.jsx
+import React from 'react';
+import { ProductList } from './components/ProductList';
+import { Cart } from './components/Cart';
+import { CartProvider } from './context/CartContext';
+
+export default function App() {
+  return (
+    <CartProvider>
+      <div className="p-4">
+        <ProductList />
+        <Cart />
+      </div>
+    </CartProvider>
+  );
+}
+
+// src/main.jsx (Vite Entry Point)
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
